@@ -42,6 +42,12 @@
 
         <dependency>
             <groupId>com.wisps</groupId>
+            <artifactId>ins-wisps-notice-api</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.wisps</groupId>
             <artifactId>ins-wisps-config</artifactId>
         </dependency>
 

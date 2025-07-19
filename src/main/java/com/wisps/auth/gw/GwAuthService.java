@@ -7,6 +7,8 @@ import com.wisps.auth.param.LoginParam;
 import com.wisps.auth.param.RegisterParam;
 import com.wisps.auth.vo.LoginVO;
 import com.wisps.base.validator.IsMobile;
+import com.wisps.notice.api.resp.NoticeResp;
+import com.wisps.notice.api.service.NoticeService;
 import com.wisps.user.api.req.UserQueryReq;
 import com.wisps.user.api.req.UserRegisterReq;
 import com.wisps.user.api.resp.UserOpResp;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import static com.wisps.auth.exception.AuthErrorCode.VERIFICATION_CODE_WRONG;
+import static com.wisps.notice.api.consts.NoticeConst.CAPTCHA_KEY_PREFIX;
 
 /**
  * 认证相关接口
@@ -41,7 +44,7 @@ public class GwAuthService {
     private UserService userService;
 
     @DubboReference(version = "1.0.0")
-    private NoticeFacadeService noticeFacadeService;
+    private NoticeService noticeService;
 
     @DubboReference(version = "1.0.0")
     private ChainService chainService;
@@ -55,7 +58,7 @@ public class GwAuthService {
 
     @GetMapping("/sendCaptcha")
     public Result<Boolean> sendCaptcha(@IsMobile String telephone) {
-        NoticeResponse noticeResponse = noticeFacadeService.generateAndSendSmsCaptcha(telephone);
+        NoticeResp noticeResponse = noticeService.generateAndSendSmsCaptcha(telephone);
         return Result.success(noticeResponse.getSuccess());
     }
 
