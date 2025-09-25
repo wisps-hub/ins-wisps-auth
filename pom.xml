@@ -10,9 +10,13 @@
         <version>0.0.1</version>
     </parent>
 
-    <groupId>com.wisps</groupId>
     <artifactId>ins-wisps-auth</artifactId>
     <version>0.0.1</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>ins-wisps-auth-api</module>
+        <module>ins-wisps-auth-provider</module>
+    </modules>
 
     <properties>
         <application.name>ins-wisps-auth</application.name>
@@ -21,80 +25,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-user-api</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-chain-api</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-notice-api</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-rpc</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-cache</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-saToken</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wisps</groupId>
-            <artifactId>ins-wisps-skywalking</artifactId>
-        </dependency>
-
-        <!--  TEST  -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.200</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

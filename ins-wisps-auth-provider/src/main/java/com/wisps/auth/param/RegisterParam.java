@@ -1,6 +1,6 @@
 package com.wisps.auth.param;
 
-import com.wisps.base.validator.IsMobile;
+import com.wisps.validator.IsMobile;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;

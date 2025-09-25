@@ -1,7 +1,7 @@
 package com.wisps.auth.exception;
 
-import com.wisps.base.exception.BizException;
-import com.wisps.base.exception.ErrorCode;
+import com.wisps.exception.BizException;
+import com.wisps.exception.ErrorCode;
 
 /**
  * 认证异常

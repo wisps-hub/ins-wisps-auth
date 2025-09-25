@@ -1,6 +1,6 @@
 package com.wisps.auth.exception;
 
-import com.wisps.base.exception.ErrorCode;
+import com.wisps.exception.ErrorCode;
 
 /**
  * 认证错误码
@@ -34,11 +34,11 @@ public enum AuthErrorCode implements ErrorCode {
 
     private String code;
 
-    private String message;
+    private String msg;
 
-    AuthErrorCode(String code, String message) {
+    AuthErrorCode(String code, String msg) {
         this.code = code;
-        this.message = message;
+        this.msg = msg;
     }
 
     @Override
@@ -47,7 +47,7 @@ public enum AuthErrorCode implements ErrorCode {
     }
 
     @Override
-    public String getMessage() {
-        return this.message;
+    public String getMsg() {
+        return this.msg;
     }
 }
