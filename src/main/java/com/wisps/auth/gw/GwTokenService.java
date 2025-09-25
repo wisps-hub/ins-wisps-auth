@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.concurrent.TimeUnit;
 
-import static com.wisps.consts.WispsCacheConst.SEPARATOR;
+import static com.wisps.cache.consts.WispsCacheConst.SEPARATOR;
 import static com.wisps.web.utils.TokenUtil.TOKEN_PREFIX;
 
 @Slf4j

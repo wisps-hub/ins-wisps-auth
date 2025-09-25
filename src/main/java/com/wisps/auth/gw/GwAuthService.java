@@ -58,8 +58,8 @@ public class GwAuthService {
 
     @GetMapping("/sendCaptcha")
     public Result<Boolean> sendCaptcha(@IsMobile String telephone) {
-        NoticeResp noticeResponse = noticeService.generateAndSendSmsCaptcha(telephone);
-        return Result.success(noticeResponse.getSuccess());
+        NoticeResp noticeResp = noticeService.generateAndSendSmsCaptcha(telephone);
+        return Result.success(noticeResp.getSuccess());
     }
 
     @PostMapping("/register")

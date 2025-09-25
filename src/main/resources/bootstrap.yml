@@ -2,4 +2,33 @@ spring:
   application:
     name: @application.name@
   config:
-    import: classpath:base.yml,classpath:config.yml
+    import:
+      - nacos:ins-wisps-common.yml?group=${wisps.nacos.group}
+      - nacos:@application.name@.yml?group=${wisps.nacos.group}
+  cloud:
+    nacos:
+      server-addr: ${wisps.nacos.server-addr}
+      config:
+        namespace: ${wisps.nacos.namespace}
+        import-check:
+          enabled: true
+      discovery:
+        namespace: ${wisps.nacos.namespace}
+        group: ${wisps.nacos.group}
+
+dubbo:
+  registry:
+    address: nacos://${wisps.nacos.server-addr}
+    parameters:
+      namespace: ${wisps.nacos.rpc-namespace}
+      group: ${wisps.nacos.rpc-group}
+
+wisps:
+  nacos:
+    server-addr: localhost:8848
+    #    namespace: 512fc384-7795-47bb-be63-30936c558237
+    #    rpc-namespace: 512fc384-7795-47bb-be63-30936c558237
+    namespace: d41a46f7-3b64-44c0-ab9f-b5766ca386d3
+    rpc-namespace: fd6ea807-9c6b-4e31-a49c-ea31762c0242
+    group: wisps
+    rpc-group: wisps-service
