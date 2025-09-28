@@ -25,8 +25,8 @@ dubbo:
 wisps:
   nacos:
     server-addr: localhost:8848
-#    namespace: 512fc384-7795-47bb-be63-30936c558237
-#    rpc-namespace: 512fc384-7795-47bb-be63-30936c558237
+    #    namespace: 512fc384-7795-47bb-be63-30936c558237
+    #    rpc-namespace: 512fc384-7795-47bb-be63-30936c558237
     namespace: d41a46f7-3b64-44c0-ab9f-b5766ca386d3
     rpc-namespace: fd6ea807-9c6b-4e31-a49c-ea31762c0242
     group: wisps

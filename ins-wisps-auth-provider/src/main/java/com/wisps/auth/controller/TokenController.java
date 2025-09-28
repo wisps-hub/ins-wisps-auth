@@ -1,4 +1,4 @@
-package com.wisps.auth.gw;
+package com.wisps.auth.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.wisps.auth.consts.Consts;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("token")
-public class GwTokenService {
+public class TokenController {
 
     @Autowired
     private ICache redisClient;

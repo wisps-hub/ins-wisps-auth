@@ -1,6 +1,6 @@
 package com.wisps.auth.consts;
 
-import static com.wisps.web.utils.TokenUtil.TOKEN_PREFIX;
+import static com.wisps.utils.TokenUtil.TOKEN_PREFIX;
 
 public class Consts {
 

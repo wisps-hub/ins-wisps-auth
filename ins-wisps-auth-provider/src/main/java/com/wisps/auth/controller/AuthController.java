@@ -1,4 +1,4 @@
-package com.wisps.auth.gw;
+package com.wisps.auth.controller;
 
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
@@ -35,7 +35,7 @@ import static com.wisps.notice.api.consts.NoticeConst.CAPTCHA_KEY_PREFIX;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("auth")
-public class GwAuthService {
+public class AuthController {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
