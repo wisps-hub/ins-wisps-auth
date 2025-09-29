@@ -1,11 +1,11 @@
-package com.wisps.auth.param;
+package com.wisps.auth.vo.req;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class LoginParam extends RegisterParam {
+public class LoginReqVo extends RegisterReqVo {
 
     /**
      * 记住我

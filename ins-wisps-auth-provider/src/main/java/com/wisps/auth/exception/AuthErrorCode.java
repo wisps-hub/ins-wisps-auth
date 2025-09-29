@@ -28,6 +28,11 @@ public enum AuthErrorCode implements ErrorCode {
     USER_NOT_LOGIN("USER_NOT_LOGIN", "用户未登录"),
 
     /**
+     * 用户操作失败
+     */
+    USER_OPERATE_FAILED("USER_OPERATE_FAILED", "用户操作失败"),
+
+    /**
      * 用户不存在
      */
     USER_NOT_EXIST("USER_NOT_EXIST", "用户不存在");

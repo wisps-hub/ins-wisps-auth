@@ -3,30 +3,27 @@ package com.wisps.auth.controller;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import com.wisps.auth.exception.AuthException;
-import com.wisps.auth.param.LoginParam;
-import com.wisps.auth.param.RegisterParam;
-import com.wisps.auth.vo.LoginVO;
-import com.wisps.base.validator.IsMobile;
-import com.wisps.notice.api.resp.NoticeResp;
-import com.wisps.notice.api.service.NoticeService;
+import com.wisps.auth.helper.NoticeHelper;
+import com.wisps.auth.helper.UserHelper;
+import com.wisps.auth.vo.req.LoginReqVo;
+import com.wisps.auth.vo.req.RegisterReqVo;
+import com.wisps.auth.vo.resp.LoginVo;
+import com.wisps.cache.client.ICache;
+import com.wisps.notice.api.consts.NoticeConst;
+import com.wisps.resp.Result;
+import com.wisps.user.api.req.RegisterReq;
 import com.wisps.user.api.req.UserQueryReq;
-import com.wisps.user.api.req.UserRegisterReq;
-import com.wisps.user.api.resp.UserOpResp;
-import com.wisps.user.api.resp.UserQueryResp;
-import com.wisps.user.api.resp.data.UserInfo;
-import com.wisps.web.vo.Result;
-import com.wisps.chain.api.service.ChainService;
-import com.wisps.user.api.service.UserService;
+import com.wisps.user.api.resp.UserDto;
+import com.wisps.validator.IsMobile;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import static com.wisps.auth.exception.AuthErrorCode.USER_OPERATE_FAILED;
 import static com.wisps.auth.exception.AuthErrorCode.VERIFICATION_CODE_WRONG;
-import static com.wisps.notice.api.consts.NoticeConst.CAPTCHA_KEY_PREFIX;
 
 /**
  * 认证相关接口
@@ -34,103 +31,67 @@ import static com.wisps.notice.api.consts.NoticeConst.CAPTCHA_KEY_PREFIX;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
-    @DubboReference(version = "1.0.0")
-    private UserService userService;
-
-    @DubboReference(version = "1.0.0")
-    private NoticeService noticeService;
-
-    @DubboReference(version = "1.0.0")
-    private ChainService chainService;
-
+    private static final Integer DEFAULT_LOGIN_SESSION_TIMEOUT = 60 * 60 * 24 * 7;
     private static final String ROOT_CAPTCHA = "8888";
 
-    /**
-     * 默认登录超时时间：7天
-     */
-    private static final Integer DEFAULT_LOGIN_SESSION_TIMEOUT = 60 * 60 * 24 * 7;
+    @Autowired
+    private ICache redisClient;
+    @Autowired
+    private UserHelper userHelper;
+    @Autowired
+    private NoticeHelper noticeHelper;
 
-    @GetMapping("/sendCaptcha")
-    public Result<Boolean> sendCaptcha(@IsMobile String telephone) {
-        NoticeResp noticeResp = noticeService.generateAndSendSmsCaptcha(telephone);
-        return Result.success(noticeResp.getSuccess());
+    @GetMapping("/sendCaptcha/{mobile}")
+    public Result<Boolean> sendCaptcha(@PathVariable("mobile") @IsMobile String mobile) {
+        return Result.success(noticeHelper.genSendSmsCaptcha(mobile));
     }
 
     @PostMapping("/register")
-    public Result<Boolean> register(@Valid @RequestBody RegisterParam registerParam) {
-
+    public Result<Boolean> register(@Valid @RequestBody RegisterReqVo registerReqVo) {
         //验证码校验
-        String cachedCode = redisTemplate.opsForValue().get(CAPTCHA_KEY_PREFIX + registerParam.getTelephone());
-        if (!StringUtils.equalsIgnoreCase(cachedCode, registerParam.getCaptcha())) {
+        String cachedCaptcha = redisClient.getString(NoticeConst.captchaKey(registerReqVo.getMobile()));
+        if (!StringUtils.equalsIgnoreCase(cachedCaptcha, registerReqVo.getCaptcha())) {
             throw new AuthException(VERIFICATION_CODE_WRONG);
         }
-
         //注册
-        UserRegisterReq userRegisterReq = new UserRegisterReq();
-        userRegisterReq.setTelephone(registerParam.getTelephone());
-        userRegisterReq.setInviteCode(registerParam.getInviteCode());
-
-        UserOpResp registerResult = userService.register(userRegisterReq);
-        if(registerResult.getSuccess()){
-            return Result.success(true);
-        }
-        return Result.error(registerResult.getRespCode(), registerResult.getRespMsg());
+        RegisterReq registerReq = new RegisterReq();
+        registerReq.setMobile(registerReq.getMobile());
+        registerReq.setInviteCode(registerReq.getInviteCode());
+        UserDto userDto = userHelper.register(registerReq);
+        return Result.success(userDto != null);
     }
 
-    /**
-     * 登录方法
-     *
-     * @param loginParam 登录信息
-     * @return 结果
-     */
     @PostMapping("/login")
-    public Result<LoginVO> login(@Valid @RequestBody LoginParam loginParam) {
-        //fixme 为了方便，暂时直接跳过
-        if (!ROOT_CAPTCHA.equals(loginParam.getCaptcha())) {
-            //验证码校验
-            String cachedCode = redisTemplate.opsForValue().get(CAPTCHA_KEY_PREFIX + loginParam.getTelephone());
-            if (!StringUtils.equalsIgnoreCase(cachedCode, loginParam.getCaptcha())) {
+    public Result<LoginVo> login(@Valid @RequestBody LoginReqVo loginReq) {
+        if (!ROOT_CAPTCHA.equals(loginReq.getCaptcha())) {
+            // 验证码校验
+            String cachedCaptcha = redisClient.getString(NoticeConst.captchaKey(loginReq.getMobile()));
+            if (!StringUtils.equalsIgnoreCase(cachedCaptcha, loginReq.getCaptcha())) {
                 throw new AuthException(VERIFICATION_CODE_WRONG);
             }
         }
-
-        //判断是注册还是登陆
-        //查询用户信息
-        UserQueryReq userQueryReq = new UserQueryReq(loginParam.getTelephone());
-        UserQueryResp<UserInfo> infoUserQueryResp = userService.query(userQueryReq);
-        UserInfo userInfo = infoUserQueryResp.getData();
-        if (userInfo == null) {
-            //需要注册
-            UserRegisterReq userRegisterReq = new UserRegisterReq();
-            userRegisterReq.setTelephone(loginParam.getTelephone());
-            userRegisterReq.setInviteCode(loginParam.getInviteCode());
-
-            UserOpResp response = userService.register(userRegisterReq);
-            if (response.getSuccess()) {
-                infoUserQueryResp = userService.query(userQueryReq);
-                userInfo = infoUserQueryResp.getData();
-                StpUtil.login(userInfo.getUserId(), new SaLoginModel().setIsLastingCookie(loginParam.getRememberMe())
-                        .setTimeout(DEFAULT_LOGIN_SESSION_TIMEOUT));
-                StpUtil.getSession().set(userInfo.getUserId().toString(), userInfo);
-                LoginVO loginVO = new LoginVO(userInfo);
-                return Result.success(loginVO);
+        // 查询用户信息
+        UserQueryReq userQueryReq = new UserQueryReq(null, loginReq.getMobile(), "");
+        UserDto userDto = userHelper.queryOne(userQueryReq);
+        if (userDto == null) {
+            // 注册
+            RegisterReq registerReq = new RegisterReq();
+            registerReq.setMobile(loginReq.getMobile());
+            registerReq.setInviteCode(loginReq.getInviteCode());
+            userDto = userHelper.register(registerReq);
+            if (userDto == null) {
+                return Result.error(USER_OPERATE_FAILED.getCode(), USER_OPERATE_FAILED.getMsg());
             }
-
-            return Result.error(response.getRespCode(), response.getRespMsg());
-        } else {
-            //登录
-            StpUtil.login(userInfo.getUserId(), new SaLoginModel().setIsLastingCookie(loginParam.getRememberMe())
-                    .setTimeout(DEFAULT_LOGIN_SESSION_TIMEOUT));
-            StpUtil.getSession().set(userInfo.getUserId().toString(), userInfo);
-            LoginVO loginVO = new LoginVO(userInfo);
-            return Result.success(loginVO);
         }
+        // 登录
+        StpUtil.login(userDto.getId(), new SaLoginModel()
+                .setIsLastingCookie(loginReq.getRememberMe())
+                .setTimeout(DEFAULT_LOGIN_SESSION_TIMEOUT));
+        StpUtil.getSession().set(userDto.getId().toString(), userDto);
+        return Result.success(new LoginVo(userDto));
     }
 
     @PostMapping("/logout")
