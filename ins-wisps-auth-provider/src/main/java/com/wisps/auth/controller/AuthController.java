@@ -74,7 +74,7 @@ public class AuthController {
             }
         }
         // 查询用户信息
-        UserQueryReq userQueryReq = new UserQueryReq(null, loginReq.getMobile(), "");
+        UserQueryReq userQueryReq = new UserQueryReq(null, "86" + loginReq.getMobile(), "");
         UserDto userDto = userHelper.queryOne(userQueryReq);
         if (userDto == null) {
             // 注册
