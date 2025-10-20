@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,7 +32,7 @@ public class LoginVo extends BaseReq {
     public LoginVo(UserDto userDto) {
         this.uid = userDto.getId().toString();
         //todo wisps
-        this.token = "";
+        this.token = UUID.randomUUID().toString().replace("-", "");
         this.tokenExpire = -1L;
     }
 }
