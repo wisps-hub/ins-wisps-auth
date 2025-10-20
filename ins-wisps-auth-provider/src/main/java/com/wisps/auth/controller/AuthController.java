@@ -1,7 +1,5 @@
 package com.wisps.auth.controller;
 
-import cn.dev33.satoken.stp.SaLoginModel;
-import cn.dev33.satoken.stp.StpUtil;
 import com.wisps.auth.exception.AuthException;
 import com.wisps.auth.helper.NoticeHelper;
 import com.wisps.auth.helper.UserHelper;
@@ -19,7 +17,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import static com.wisps.auth.exception.AuthErrorCode.USER_OPERATE_FAILED;
@@ -86,17 +83,13 @@ public class AuthController {
                 return Result.error(USER_OPERATE_FAILED.getCode(), USER_OPERATE_FAILED.getMsg());
             }
         }
-        // 登录
-        StpUtil.login(userDto.getId(), new SaLoginModel()
-                .setIsLastingCookie(loginReq.getRememberMe())
-                .setTimeout(DEFAULT_LOGIN_SESSION_TIMEOUT));
-        StpUtil.getSession().set(userDto.getId().toString(), userDto);
+        // 登录 todo wisps
         return Result.success(new LoginVo(userDto));
     }
 
     @PostMapping("/logout")
     public Result<Boolean> logout() {
-        StpUtil.logout();
+        //todo wisps
         return Result.success(true);
     }
 

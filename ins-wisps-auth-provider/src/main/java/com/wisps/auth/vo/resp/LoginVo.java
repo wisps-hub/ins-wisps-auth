@@ -1,6 +1,5 @@
 package com.wisps.auth.vo.resp;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.wisps.req.BaseReq;
 import com.wisps.user.api.resp.UserDto;
 import lombok.Getter;
@@ -30,7 +29,8 @@ public class LoginVo extends BaseReq {
 
     public LoginVo(UserDto userDto) {
         this.uid = userDto.getId().toString();
-        this.token = StpUtil.getTokenValue();
-        this.tokenExpire = StpUtil.getTokenSessionTimeout();
+        //todo wisps
+        this.token = "";
+        this.tokenExpire = -1L;
     }
 }
