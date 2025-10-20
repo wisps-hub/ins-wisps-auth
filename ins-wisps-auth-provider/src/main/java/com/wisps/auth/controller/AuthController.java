@@ -86,11 +86,7 @@ public class AuthController {
                 return Result.error(USER_OPERATE_FAILED.getCode(), USER_OPERATE_FAILED.getMsg());
             }
         }
-        // 登录
-        StpUtil.login(userDto.getId(), new SaLoginModel()
-                .setIsLastingCookie(loginReq.getRememberMe())
-                .setTimeout(DEFAULT_LOGIN_SESSION_TIMEOUT));
-        StpUtil.getSession().set(userDto.getId().toString(), userDto);
+        // 登录 todo wisps
         return Result.success(new LoginVo(userDto));
     }
 
