@@ -2,7 +2,7 @@ wisps:
   nacos:
     server-addr: localhost:8848
     namespace: 512fc384-7795-47bb-be63-30936c558237
-    rpc-namespace: 512fc384-7795-47bb-be63-30936c558237
+    rpc-namespace: 4bbd7236-5dc2-4e11-82c8-133a6c6979bb
     group: wisps
     rpc-group: wisps-service
 
